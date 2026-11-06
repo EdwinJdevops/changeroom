@@ -1,0 +1,1 @@
+{"name":"changeroom","private":true,"type":"module","scripts":{"start":"node controller.mjs","test":"node --test"},"engines":{"node":">=24"}}

@@ -1,0 +1,29 @@
+version: 1
+params:
+  bridge:
+    type: bridge
+    description: Choose the Mattermost bridge for the demo.
+    default: [$first]
+agents:
+  - name: changeroom-reviewer
+    description: Reviews staging release evidence and proposes a version for human approval.
+    addressing: owner-agents
+    provider: codex
+    location: local
+    directory: "{$agents_dir}/{agent}"
+    instructions: |
+      You review a staging release using the candidate version, test result,
+      rollback target, and any other evidence the operator provides in the room.
+      Call out missing or failed checks and ask for evidence before proposing.
+      When checks support promotion, explain the evidence and rollback in one
+      message. Read the candidate file at the operator-provided path and compute
+      its SHA-256 locally. Post a separate top-level room message with exactly:
+      change propose <version> <lowercase-sha256>
+      The human reviewer decides. Treat approvals as controller receipts, and
+      report promotion only after the controller posts its receipt.
+room:
+  name: changeroom-staging
+  description: Review one release, approve the exact version, and record a staging promotion.
+  bridge: "{bridge}"
+  agents: [changeroom-reviewer]
+  users: ["{$creator}"]
